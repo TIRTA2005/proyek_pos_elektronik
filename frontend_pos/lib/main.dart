@@ -5,11 +5,18 @@ import 'providers/cart_provider.dart';
 import 'screens/login_screen.dart';
 import 'screens/katalog_screen.dart';
 
-void main() {
+import 'package:shared_preferences/shared_preferences.dart';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  
+  final authProvider = AuthProvider();
+  await authProvider.checkLoginStatus();
+
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => AuthProvider()),
+        ChangeNotifierProvider.value(value: authProvider),
         ChangeNotifierProvider(create: (_) => CartProvider()),
       ],
       child: const MyApp(),
@@ -37,22 +44,11 @@ class MyApp extends StatelessWidget {
       },
       home: Consumer<AuthProvider>(
         builder: (context, authProvider, child) {
-          return FutureBuilder(
-            future: authProvider.checkLoginStatus(),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Scaffold(
-                  body: Center(child: CircularProgressIndicator()),
-                );
-              } else {
-                if (authProvider.isLoggedIn) {
-                  return const KatalogBarangScreen();
-                } else {
-                  return const LoginScreen();
-                }
-              }
-            },
-          );
+          if (authProvider.isLoggedIn) {
+            return const KatalogBarangScreen();
+          } else {
+            return const LoginScreen();
+          }
         },
       ),
     );
