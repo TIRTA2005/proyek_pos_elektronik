@@ -15,7 +15,6 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // Admin
         \App\Models\User::factory()->create([
             'name' => 'Admin Utama',
             'email' => 'admin@pos.com',
@@ -23,7 +22,6 @@ class DatabaseSeeder extends Seeder
             'role' => 'admin',
         ]);
 
-        // Kasir
         \App\Models\User::factory()->create([
             'name' => 'Kasir Satu',
             'email' => 'kasir@pos.com',
@@ -31,7 +29,6 @@ class DatabaseSeeder extends Seeder
             'role' => 'kasir',
         ]);
 
-        // Barang
         $barangs = [
             ['nama_barang' => 'Charger GaN 120W', 'deskripsi' => 'Charger super cepat', 'harga' => 250000, 'stok' => 50],
             ['nama_barang' => 'Kabel Data Type-C', 'deskripsi' => 'Kabel braided 2m', 'harga' => 50000, 'stok' => 100],

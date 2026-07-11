@@ -42,7 +42,6 @@ class AuthProvider extends ChangeNotifier {
           await logout();
         }
       } catch (e) {
-        // Assume offline or server error
       }
       notifyListeners();
     }
@@ -95,7 +94,6 @@ class AuthProvider extends ChangeNotifier {
           },
         );
       } catch (e) {
-        // Ignore error
       }
     }
 
