@@ -17,10 +17,12 @@ class TransaksiController extends Controller
         DB::beginTransaction();
         try {
             $transaksi_id = DB::table('transaksi')->insertGetId([
-                'user_id' => 1, 
+                'user_id' => $request->user()->id, 
                 'pelanggan_id' => null, 
                 'total_harga' => $total_harga,
                 'tanggal_transaksi' => Carbon::now(),
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
             ]);
 
             foreach ($cart as $item) {
@@ -30,6 +32,8 @@ class TransaksiController extends Controller
                     'kuantitas' => $item['kuantitas'],
                     'harga_satuan' => $item['harga'],
                     'subtotal' => $item['subtotal'],
+                    'created_at' => Carbon::now(),
+                    'updated_at' => Carbon::now(),
                 ]);
 
                 DB::table('barang')
@@ -41,7 +45,7 @@ class TransaksiController extends Controller
             return response()->json(['status' => 'success', 'message' => 'Transaksi berhasil diproses!']);
         } catch (\Exception $e) {
             DB::rollBack();
-            return response()->json(['status' => 'error', 'message' => 'Gagal memproses transaksi.']);
+            return response()->json(['status' => 'error', 'message' => 'Gagal memproses transaksi: ' . $e->getMessage()]);
         }
     }
 }

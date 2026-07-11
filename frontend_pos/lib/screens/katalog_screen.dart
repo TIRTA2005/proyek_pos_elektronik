@@ -34,8 +34,15 @@ class _KatalogBarangScreenState extends State<KatalogBarangScreen> {
   }
 
   Future<void> fetchBarang() async {
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
     try {
-      final response = await http.get(Uri.parse(apiBarang));
+      final response = await http.get(
+        Uri.parse(apiBarang),
+        headers: {
+          'Authorization': 'Bearer ${authProvider.token}',
+          'Accept': 'application/json',
+        }
+      );
       if (response.statusCode == 200) {
         final List data = json.decode(response.body)['data'];
         setState(() {
@@ -139,7 +146,7 @@ class _KatalogBarangScreenState extends State<KatalogBarangScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Divider(),
-              Text('Kasir: ${authProvider.namaKasir}'),
+              Text('Kasir: ${authProvider.userName}'),
               const Divider(),
               ...keranjangDibayar.map((item) => Padding(
                 padding: const EdgeInsets.symmetric(vertical: 4.0),
@@ -181,7 +188,7 @@ class _KatalogBarangScreenState extends State<KatalogBarangScreen> {
     final totalDibayar = cartProvider.totalHarga;
     final keranjangDibayar = List.from(cartProvider.keranjang);
 
-    bool success = await cartProvider.prosesPembayaran(authProvider.namaKasir);
+    bool success = await cartProvider.prosesPembayaran(authProvider.token);
 
     if (success) {
       cartProvider.clearKeranjang();

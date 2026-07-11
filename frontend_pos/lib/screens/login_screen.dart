@@ -11,18 +11,19 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
   Future<void> _login() async {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
     try {
-      await authProvider.login(_usernameController.text, _passwordController.text);
+      await authProvider.login(_emailController.text, _passwordController.text);
       if (mounted) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const KatalogBarangScreen()),
-        );
+        if (authProvider.userRole == 'admin') {
+          Navigator.pushReplacementNamed(context, '/admin');
+        } else {
+          Navigator.pushReplacementNamed(context, '/katalog');
+        }
       }
     } catch (e) {
       if (mounted) {
@@ -35,7 +36,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   void dispose() {
-    _usernameController.dispose();
+    _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
   }
@@ -56,9 +57,9 @@ class _LoginScreenState extends State<LoginScreen> {
                 const Text('Login Sistem POS', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
                 const SizedBox(height: 30),
                 TextField(
-                  controller: _usernameController,
+                  controller: _emailController,
                   decoration: InputDecoration(
-                    labelText: 'Username',
+                    labelText: 'Email',
                     border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
                     filled: true,
                     fillColor: Colors.white,

@@ -53,16 +53,19 @@ class CartProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<bool> prosesPembayaran(String kasirName) async {
+  Future<bool> prosesPembayaran(String token) async {
     if (_keranjang.isEmpty) return false;
 
     try {
       final response = await http.post(
         Uri.parse(_apiTransaksi),
-        headers: {'Content-Type': 'application/json'},
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+          'Accept': 'application/json',
+        },
         body: json.encode({
           'total_harga': totalHarga,
-          'kasir_nama': kasirName,
           'cart': _keranjang.map((item) => item.toJson()).toList(),
         }),
       );
